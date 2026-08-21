@@ -64,7 +64,7 @@ const en = {
       {
         t: "Install from npm",
         d: "Node ≥ 20. Published from GitHub Actions with provenance — `npm audit signatures` verifies the tarball came from the repo.",
-        code: "npm i -g @uxdata/kie\nkie version",
+        code: "npm i -g @julio-daza/kie\nkie version",
       },
       {
         t: "Create a dedicated key",
@@ -246,7 +246,7 @@ const es: typeof en = {
       {
         t: "Instala desde npm",
         d: "Node ≥ 20. Publicado desde GitHub Actions con provenance — `npm audit signatures` verifica que el tarball salió del repo.",
-        code: "npm i -g @uxdata/kie\nkie version",
+        code: "npm i -g @julio-daza/kie\nkie version",
       },
       {
         t: "Crea una key dedicada",
