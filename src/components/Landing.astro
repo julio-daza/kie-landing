@@ -9,7 +9,7 @@ interface Props {
 }
 const { lang } = Astro.props;
 const s = t(lang);
-const installCmd = `git clone ${REPO}.git && cd kie-cli/kie && npm i && npm run build && npm link`;
+const installCmd = "npm i -g @uxdata/kie";
 
 const usageTabs = [
   { id: "image", label: s.usage.tabs.image, code: s.usage.image },

@@ -62,9 +62,9 @@ const en = {
     title: "Two minutes, done right.",
     steps: [
       {
-        t: "Clone and link",
-        d: "Dev dependencies only (TypeScript). `npm link` puts `kie` on your PATH.",
-        code: `git clone ${REPO}.git\ncd kie-cli/kie\nnpm install && npm run build && npm link`,
+        t: "Install from npm",
+        d: "Node ≥ 20. Published from GitHub Actions with provenance — `npm audit signatures` verifies the tarball came from the repo.",
+        code: "npm i -g @uxdata/kie\nkie version",
       },
       {
         t: "Create a dedicated key",
@@ -172,7 +172,7 @@ kie image nano-banana-2 \\
     items: [
       { q: "Is this affiliated with KIE.ai?", a: "No. It's an independent, community project. KIE and its logo are trademarks of their owner, used only to identify the service." },
       { q: "Does it work on Linux or Windows?", a: "Yes. Without a Keychain the key is stored in ~/.config/kie/key with 0600 permissions. Everything else is identical." },
-      { q: "Why no npm package yet?", a: "It will come once the flags settle, published from CI with provenance so the tarball is verifiable against the commit. Until then: clone + npm link." },
+      { q: "How is the npm package built?", a: "Every release is published by GitHub Actions from a git tag, with npm provenance: the tarball is cryptographically linked to the commit and workflow that produced it. Zero runtime dependencies, so what you audit is what runs." },
       { q: "What if a model isn't in the catalog?", a: "kie run <model-id> --input '{…}' --max-credits N sends any KIE Market model. Check the schema on docs.kie.ai first, or use --dry-run." },
       { q: "Can I use it without an agent?", a: "Of course. In a terminal it renders tables, panels and a live spinner; pipe it and you get JSON." },
     ],
@@ -244,9 +244,9 @@ const es: typeof en = {
     title: "Dos minutos, bien hechos.",
     steps: [
       {
-        t: "Clona y enlaza",
-        d: "Solo dependencias de desarrollo (TypeScript). `npm link` deja `kie` en tu PATH.",
-        code: `git clone ${REPO}.git\ncd kie-cli/kie\nnpm install && npm run build && npm link`,
+        t: "Instala desde npm",
+        d: "Node ≥ 20. Publicado desde GitHub Actions con provenance — `npm audit signatures` verifica que el tarball salió del repo.",
+        code: "npm i -g @uxdata/kie\nkie version",
       },
       {
         t: "Crea una key dedicada",
@@ -354,7 +354,7 @@ kie image nano-banana-2 \\
     items: [
       { q: "¿Está afiliado a KIE.ai?", a: "No. Es un proyecto independiente de la comunidad. KIE y su logo son marcas de su propietario, usadas solo para identificar el servicio." },
       { q: "¿Funciona en Linux o Windows?", a: "Sí. Sin Keychain, la key se guarda en ~/.config/kie/key con permisos 0600. Todo lo demás es idéntico." },
-      { q: "¿Por qué todavía no hay paquete en npm?", a: "Llegará cuando los flags se estabilicen, publicado desde CI con provenance para que el tarball sea verificable contra el commit. Mientras tanto: clone + npm link." },
+      { q: "¿Cómo se construye el paquete de npm?", a: "Cada release la publica GitHub Actions desde un tag de git, con provenance de npm: el tarball queda vinculado criptográficamente al commit y al workflow que lo produjo. Cero dependencias en runtime: lo que auditas es lo que corre." },
       { q: "¿Y si un modelo no está en el catálogo?", a: "kie run <model-id> --input '{…}' --max-credits N envía cualquier modelo del Market de KIE. Revisa el schema en docs.kie.ai primero, o usa --dry-run." },
       { q: "¿Puedo usarlo sin un agente?", a: "Claro. En la terminal muestra tablas, paneles y un spinner en vivo; si haces pipe obtienes JSON." },
     ],
