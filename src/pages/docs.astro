@@ -1,0 +1,9 @@
+---
+import Base from "../layouts/Base.astro";
+import DocsPage from "../components/DocsPage.astro";
+import { docs } from "../i18n/docs";
+---
+
+<Base lang="en" path="/docs" title={docs.en.meta.title} description={docs.en.meta.description}>
+  <DocsPage lang="en" />
+</Base>

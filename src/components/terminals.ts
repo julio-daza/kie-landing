@@ -17,7 +17,7 @@ const LOGO = [
 const TAGLINE = [
   "",
   "",
-  `${L("w", "kie")} ${L("dim", "v0.2.0")}`,
+  `${L("w", "kie")} ${L("dim", "v0.5.0")}`,
   L("b", "KIE.ai media generation for agents &amp; humans"),
   L("dim", "images · video · zero dependencies · spend-guarded"),
   "",

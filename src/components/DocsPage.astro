@@ -1,0 +1,382 @@
+---
+import Icon from "./Icon.astro";
+import { docs as DOCS } from "../i18n/docs";
+import { REPO, t, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const d = DOCS[lang];
+const u = t(lang);
+const S = d.sections;
+const md = (txt: string) => txt.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+const toc = [
+  ["install", S.install.h],
+  ["key", S.key.h],
+  ["commands", S.commands.h],
+  ["flags", S.flags.h],
+  ["catalog", S.catalog.h],
+  ["guard", S.guard.h],
+  ["config", S.config.h],
+  ["skill", S.skill.h],
+  ["output", S.output.h],
+  ["security", S.security.h],
+  ["faq", S.faq.h],
+] as const;
+---
+
+<div class="rails docs">
+  <span class="cross tl"></span><span class="cross tr"></span>
+  <aside class="toc">
+    <p class="eyebrow">{d.toc}</p>
+    <nav>
+      {toc.map(([id, label]) => <a href={`#${id}`} data-toc={id}>{label}</a>)}
+    </nav>
+    <a class="gh" href={REPO} target="_blank" rel="noopener">GitHub →</a>
+  </aside>
+
+  <article class="content">
+    <header class="head">
+      <p class="eyebrow">kie · v0.5</p>
+      <h1>{d.title}</h1>
+      <p class="lead">{d.lead}</p>
+    </header>
+
+    <section id="install">
+      <h2>{S.install.h}</h2>
+      <p>{S.install.p}</p>
+      <pre class="code"><code>{S.install.code}</code></pre>
+      <p class="note" set:html={md(S.install.note)} />
+    </section>
+
+    <section id="key">
+      <h2>{S.key.h}</h2>
+      <p>{S.key.p}</p>
+      <ul>{S.key.steps.map((x) => <li set:html={md(x)} />)}</ul>
+      <pre class="code"><code>{S.key.code}</code></pre>
+      <p class="note" set:html={md(S.key.keyOrder)} />
+    </section>
+
+    <section id="commands">
+      <h2>{S.commands.h}</h2>
+      <p set:html={md(S.commands.p)} />
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tbody>{u.docs.commands.map(([c, x]) => <tr><td>{c}</td><td>{x}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="flags">
+      <h2>{S.flags.h}</h2>
+      <p set:html={md(S.flags.p)} />
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tbody>{u.docs.flags.map(([f, x]) => <tr><td>{f}</td><td>{x}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="catalog">
+      <h2>{S.catalog.h}</h2>
+      <p set:html={md(S.catalog.p)} />
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tbody>
+            {u.docs.catalog.map(([n, k, x]) => (
+              <tr><td>{n}</td><td><span class="tag">{k}</span></td><td>{x}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>{S.catalog.escape}</p>
+      <pre class="code"><code>{S.catalog.escapeCode}</code></pre>
+    </section>
+
+    <section id="guard">
+      <h2>{S.guard.h}</h2>
+      <p>{S.guard.p}</p>
+      <ol class="checks">{S.guard.checks.map((x, i) => <li><span class="n">0{i + 1}</span><span set:html={md(x)} /></li>)}</ol>
+      <h3>{S.guard.exitH}</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tbody>
+            {S.guard.exit.map(([c, x]) => (
+              <tr><td><span class:list={["code-pill", c === "3" ? "hot" : ""]}>{c}</span></td><td set:html={md(x)} /></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="config">
+      <h2>{S.config.h}</h2>
+      <p set:html={md(S.config.p)} />
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tbody>{S.config.rows.map(([k, v, x]) => <tr><td>{k}</td><td><code>{v}</code></td><td>{x}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <pre class="code"><code>{S.config.code}</code></pre>
+    </section>
+
+    <section id="skill">
+      <h2>{S.skill.h}</h2>
+      <p>{S.skill.p}</p>
+      <pre class="code"><code>{S.skill.code}</code></pre>
+      <div class="grid agents">
+        {S.skill.agents.map((a) => (
+          <div class="card">
+            <Icon name={a.icon as "openai"} size={26} class="aicon" />
+            <h3>{a.name}</h3>
+            <dl>
+              <dt>path</dt><dd><code>{a.path}</code></dd>
+              <dt>invoke</dt><dd><code>{a.invoke}</code></dd>
+            </dl>
+            <p>{a.note}</p>
+          </div>
+        ))}
+      </div>
+      <p class="note" set:html={md(S.skill.alt)} />
+    </section>
+
+    <section id="output">
+      <h2>{S.output.h}</h2>
+      <p set:html={md(S.output.p)} />
+      <pre class="code"><code>{S.output.code}</code></pre>
+    </section>
+
+    <section id="security">
+      <h2>{S.security.h}</h2>
+      <ul>{S.security.items.map((x) => <li set:html={md(x)} />)}</ul>
+    </section>
+
+    <section id="faq">
+      <h2>{S.faq.h}</h2>
+      <div class="faq">
+        {u.faq.items.map((it) => (
+          <details>
+            <summary>{it.q}<span class="plus" aria-hidden="true">+</span></summary>
+            <p>{it.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </article>
+</div>
+
+<script>
+  // Highlight the TOC entry for the section in view.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc]")];
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        links.forEach((l) => l.classList.toggle("on", l.dataset.toc === e.target.id));
+      }
+    },
+    { rootMargin: "-20% 0px -70% 0px" },
+  );
+  document.querySelectorAll("article section[id]").forEach((s) => io.observe(s));
+</script>
+
+<style>
+  .docs {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 72px);
+    padding-block: 56px 96px;
+  }
+  @media (max-width: 900px) {
+    .docs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .toc {
+      position: static !important;
+    }
+  }
+  .toc {
+    position: sticky;
+    top: 88px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .toc nav {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--line);
+  }
+  .toc nav a {
+    padding: 7px 14px;
+    font-size: 14px;
+    color: var(--fg-muted);
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+  }
+  .toc nav a:hover,
+  .toc nav a.on {
+    color: var(--fg);
+    border-left-color: var(--brand);
+  }
+  .toc .gh {
+    margin-top: 20px;
+    font-size: 13.5px;
+    color: var(--brand);
+  }
+  .head {
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-size: clamp(34px, 4.5vw, 56px);
+  }
+  .content section {
+    border-top: 1px solid var(--line);
+    padding: 40px 0;
+    scroll-margin-top: 84px;
+  }
+  .content h2 {
+    font-size: 26px;
+    margin-bottom: 14px;
+    max-width: none;
+  }
+  .content h3 {
+    margin: 26px 0 12px;
+  }
+  .content p,
+  .content li {
+    color: var(--fg-muted);
+    font-size: 15.5px;
+    max-width: 72ch;
+  }
+  .content p {
+    margin: 0 0 14px;
+  }
+  .content ul,
+  .content ol.checks {
+    padding-left: 20px;
+    margin: 0 0 16px;
+  }
+  .content li {
+    margin-bottom: 6px;
+  }
+  .content :global(code) {
+    font-size: 0.9em;
+    color: var(--fg);
+    background: var(--bg-raised);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+  .content pre.code {
+    margin: 6px 0 18px;
+  }
+  .content pre.code :global(code) {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+  }
+  .note {
+    font-size: 14px !important;
+    color: var(--fg-dim) !important;
+  }
+  .tbl-wrap {
+    margin: 6px 0 18px;
+  }
+  ol.checks {
+    list-style: none;
+    padding-left: 0 !important;
+  }
+  ol.checks li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 8px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  ol.checks .n {
+    font-family: var(--font-mono);
+    color: var(--brand);
+    font-size: 13px;
+    padding-top: 2px;
+  }
+  .code-pill {
+    font-family: var(--font-mono);
+    display: inline-block;
+    min-width: 28px;
+    text-align: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line-strong);
+  }
+  .code-pill.hot {
+    color: var(--brand);
+    border-color: rgba(0, 168, 255, 0.5);
+    background: var(--brand-soft);
+  }
+  .agents {
+    grid-template-columns: repeat(2, 1fr);
+    margin: 10px 0 18px;
+  }
+  @media (max-width: 700px) {
+    .agents {
+      grid-template-columns: 1fr;
+    }
+  }
+  :global(.aicon) {
+    color: var(--fg);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .agents dl {
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    gap: 6px 10px;
+    margin: 10px 0 12px;
+    font-size: 13.5px;
+  }
+  .agents dt {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--fg-dim);
+    padding-top: 3px;
+  }
+  .agents dd {
+    margin: 0;
+  }
+  .agents .card p {
+    font-size: 14px;
+    margin: 0;
+  }
+  .faq details {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 0;
+    font-weight: 560;
+    color: var(--fg);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .plus {
+    color: var(--fg-dim);
+    font-family: var(--font-mono);
+  }
+  details[open] .plus {
+    transform: rotate(45deg);
+    color: var(--brand);
+  }
+</style>

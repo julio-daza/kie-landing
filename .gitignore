@@ -14,3 +14,7 @@ dist/
 .DS_Store
 .vscode/
 .idea/
+
+# npm is the lockfile of record (CI uses npm ci); local pnpm leftovers are ignored
+pnpm-lock.yaml
+pnpm-workspace.yaml

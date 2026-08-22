@@ -4,12 +4,20 @@ import { LANGS, REPO, localePath, t, type Lang } from "../i18n/ui";
 
 interface Props {
   lang: Lang;
+  /** Locale-less path of this page ("/" or "/docs"). */
+  path?: string;
+  title?: string;
+  description?: string;
 }
-const { lang } = Astro.props;
+const { lang, path = "/", title, description } = Astro.props;
 const s = t(lang);
 const site = Astro.site ?? new URL("http://localhost:4321");
-const canonical = new URL(localePath(lang), site).toString();
+const canonical = new URL(localePath(lang, path), site).toString();
 const other: Lang = lang === "en" ? "es" : "en";
+const home = localePath(lang);
+const docsHref = localePath(lang, "/docs");
+const pageTitle = title ?? s.meta.title;
+const pageDescription = description ?? s.meta.description;
 ---
 
 <!doctype html>
@@ -17,15 +25,16 @@ const other: Lang = lang === "en" ? "es" : "en";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{s.meta.title}</title>
-    <meta name="description" content={s.meta.description} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="en" href={new URL(localePath("en"), site).toString()} />
-    <link rel="alternate" hreflang="es" href={new URL(localePath("es"), site).toString()} />
-    <link rel="alternate" hreflang="x-default" href={new URL(localePath("en"), site).toString()} />
-    <meta property="og:title" content={s.meta.title} />
-    <meta property="og:description" content={s.meta.description} />
+    <link rel="alternate" hreflang="en" href={new URL(localePath("en", path), site).toString()} />
+    <link rel="alternate" hreflang="es" href={new URL(localePath("es", path), site).toString()} />
+    <link rel="alternate" hreflang="x-default" href={new URL(localePath("en", path), site).toString()} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={new URL("/kie-cli-ligth.png", site).toString()} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#0a0a0c" />
@@ -39,20 +48,18 @@ const other: Lang = lang === "en" ? "es" : "en";
   <body>
     <header class="nav">
       <div class="rails nav-inner">
-        <a href={localePath(lang)} class="brand" aria-label="kie">
-          <img src="/favicon.svg" alt="" width="26" height="26" />
-          <span>kie</span>
-          <span class="tag brand">cli</span>
+        <a href={home} class="brand" aria-label="KIE CLI">
+          <img src="/Kie-cli-logo-white.png" alt="KIE CLI" width="97" height="30" />
         </a>
         <nav class="links" aria-label="Primary">
-          <a href="#why">{s.nav.features}</a>
-          <a href="#install">{s.nav.install}</a>
-          <a href="#tutorials">{s.nav.tutorials}</a>
-          <a href="#docs">{s.nav.docs}</a>
-          <a href="#skill">{s.nav.skill}</a>
+          <a href={`${home}#why`}>{s.nav.features}</a>
+          <a href={`${home}#install`}>{s.nav.install}</a>
+          <a href={`${home}#tutorials`}>{s.nav.tutorials}</a>
+          <a href={docsHref} class:list={[{ active: path === "/docs" }]}>{s.nav.docs}</a>
+          <a href={`${home}#skill`}>{s.nav.skill}</a>
         </nav>
         <div class="actions">
-          <a href={localePath(other)} class="lang" hreflang={other} title={LANGS[other]}>{s.nav.lang}</a>
+          <a href={localePath(other, path)} class="lang" hreflang={other} title={LANGS[other]}>{s.nav.lang}</a>
           <a href={REPO} class="btn gh" target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
               ><path
@@ -134,10 +141,13 @@ const other: Lang = lang === "en" ? "es" : "en";
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-weight: 650;
-    letter-spacing: -0.02em;
-    font-size: 18px;
+  }
+  .brand img {
+    height: 30px;
+    width: auto;
+  }
+  .links a.active {
+    color: var(--fg);
   }
   .links {
     display: flex;

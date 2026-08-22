@@ -1,14 +1,18 @@
 ---
 import MaskedHeading from "./MaskedHeading";
+import Icon from "./Icon.astro";
 import Terminal from "./Terminal.astro";
 import { guardTerminal, heroTerminal } from "./terminals";
-import { REPO, t, type Lang } from "../i18n/ui";
+import { REPO, localePath, t, type Lang } from "../i18n/ui";
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const s = t(lang);
+const docsHref = localePath(lang, "/docs");
+const TUT_AGENTS = ["claude", "codex", "cursor", "gemini"] as const;
+const ICON: Record<string, string> = { claude: "claude", codex: "openai", cursor: "cursor", gemini: "gemini" };
 const installCmd = "npm i -g @uxdata-co/kie";
 
 const usageTabs = [
@@ -60,15 +64,17 @@ const usageTabs = [
   </div>
 </section>
 
-<!-- ============================================================ TRUST STRIP -->
+<!-- ============================================================ WORKS WITH -->
 <section class="trust">
   <div class="rails">
+    <p class="eyebrow works-label">{s.agents.label}</p>
     <div class="grid trust-grid">
-      {s.trust.map((item) => (
-        <div class="stat reveal">
-          <span class="num">{item.k}</span>
-          <span class="lbl">{item.v}</span>
-        </div>
+      {s.agents.items.map((a) => (
+        <a class="stat agent reveal" href={`${docsHref}#skill`}>
+          <Icon name={a.icon as "openai"} size={34} class="agent-icon" />
+          <span class="agent-name">{a.name}</span>
+          <span class="lbl mono">{a.hint}</span>
+        </a>
       ))}
     </div>
   </div>
@@ -181,20 +187,20 @@ const usageTabs = [
 
     <div class="agent-tabs reveal" data-tabs>
       <div class="tablist" role="tablist">
-        {(["claude", "codex"] as const).map((k, i) => (
+        {TUT_AGENTS.map((k, i) => (
           <button role="tab" id={`tut-tab-${k}`} aria-controls={`tut-panel-${k}`} aria-selected={i === 0 ? "true" : "false"} type="button">
-            <span class={`mark ${k}`} aria-hidden="true">{k === "claude" ? "✱" : "⌘"}</span>
+            <Icon name={ICON[k] as "openai"} size={18} class="tab-icon" />
             {s.tutorials.tabs[k].label}
           </button>
         ))}
       </div>
-      {(["claude", "codex"] as const).map((k, i) => {
+      {TUT_AGENTS.map((k, i) => {
         const tab = s.tutorials.tabs[k];
         return (
           <div role="tabpanel" id={`tut-panel-${k}`} aria-labelledby={`tut-tab-${k}`} hidden={i !== 0} class="agent-panel">
             <ol class="tut-steps">
               {tab.steps.map((st, j) => (
-                <li><span class="n">{j + 1}</span><p set:html={st.replace(/(\/kie-media|\$kie-media|~\/\.[a-z]+\/skills\/|\/skills|--json|exit 3)/g, "<code>$1</code>")} /></li>
+                <li><span class="n">{j + 1}</span><p set:html={st.replace(/(\/kie-media|\$kie-media|~\/\.[a-z]+\/skills\/|\/skills list|\/skills|--json|exit 3|activate_skill|gemini)/g, "<code>$1</code>")} /></li>
               ))}
             </ol>
             <div class="chat">
@@ -265,51 +271,24 @@ const usageTabs = [
 <section id="docs" class="section-pad">
   <div class="rails">
     <span class="cross tl"></span><span class="cross tr"></span>
-    <div class="reveal">
-      <p class="eyebrow">{s.docs.eyebrow}</p>
-      <h2>{s.docs.title}</h2>
-    </div>
-    <div class="tbl-wrap reveal" style="margin-top:40px">
-      <table class="tbl">
-        <tbody>
-          {s.docs.commands.map(([cmd, desc]) => (
-            <tr><td>{cmd}</td><td>{desc}</td></tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="docs-2col">
+    <div class="split">
       <div class="reveal">
-        <h3 class="sub">{s.docs.flagsTitle}</h3>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <tbody>
-              {s.docs.flags.map(([flag, desc]) => (
-                <tr><td>{flag}</td><td>{desc}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <p class="eyebrow">{s.docs.eyebrow}</p>
+        <h2>{s.docs.title}</h2>
+        <p class="lead">{s.docs.teaser}</p>
+        <p style="margin-top:28px"><a class="btn btn-primary" href={docsHref}>{s.docs.cta} →</a></p>
       </div>
-      <div class="reveal">
-        <h3 class="sub">{s.docs.catalogTitle}</h3>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <tbody>
-              {s.docs.catalog.map(([name, kind, desc]) => (
-                <tr>
-                  <td>{name}</td>
-                  <td><span class="tag">{kind}</span></td>
-                  <td>{desc}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div class="tbl-wrap reveal">
+        <table class="tbl">
+          <tbody>
+            {s.docs.commands.slice(0, 7).map(([cmd, desc]) => (
+              <tr><td>{cmd}</td><td>{desc}</td></tr>
+            ))}
+            <tr><td colspan="2"><a class="more" href={docsHref}>{s.docs.more.replace("README", "docs")} →</a></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    <p style="margin-top:28px"><a class="more" href={`${REPO}/blob/main/kie/README.md`} target="_blank" rel="noopener">{s.docs.more} →</a></p>
   </div>
 </section>
 
@@ -471,11 +450,35 @@ const usageTabs = [
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  .works-label {
+    margin: 18px 0 0;
+  }
   .stat {
     padding: 28px;
     display: flex;
     flex-direction: column;
     gap: 6px;
+  }
+  .agent {
+    transition: background 0.2s ease;
+  }
+  .agent:hover {
+    background: var(--bg-raised);
+  }
+  .agent-icon {
+    width: 34px;
+    height: 34px;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+  .agent-name {
+    font-size: 20px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .tab-icon {
+    width: 18px;
+    height: 18px;
   }
   .num {
     font-size: 40px;
@@ -624,22 +627,6 @@ const usageTabs = [
     gap: 10px;
     font-size: 15px;
     padding: 16px 24px;
-  }
-  .mark {
-    display: inline-grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #fff;
-  }
-  .mark.claude {
-    background: #d97757;
-  }
-  .mark.codex {
-    background: #111;
-    border: 1px solid var(--line-strong);
   }
   .agent-panel[hidden] {
     display: none;

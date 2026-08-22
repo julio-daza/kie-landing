@@ -1,0 +1,26 @@
+---
+/**
+ * Inlines an SVG from src/icons (lobehub/icons-static-svg, MIT) so `fill="currentColor"`
+ * picks up the surrounding text color. Logos remain trademarks of their owners.
+ */
+import openai from "../icons/openai.svg?raw";
+import claude from "../icons/claude.svg?raw";
+import cursor from "../icons/cursor.svg?raw";
+import gemini from "../icons/gemini.svg?raw";
+
+const ICONS = { openai, claude, cursor, gemini } as const;
+
+interface Props {
+  name: keyof typeof ICONS;
+  size?: number;
+  class?: string;
+}
+const { name, size = 24, class: cls = "" } = Astro.props;
+const svg = ICONS[name]
+  .replace(/<svg/, `<svg aria-hidden="true" focusable="false" class="icon ${cls}"`)
+  .replace(/height="1em"/, `height="${size}"`)
+  .replace(/width="1em"/, `width="${size}"`)
+  .replace(/style="[^"]*"/, "");
+---
+
+<Fragment set:html={svg} />

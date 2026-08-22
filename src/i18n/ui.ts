@@ -20,12 +20,15 @@ const en = {
     copied: "Copied",
     terminalTitle: "kie help",
   },
-  trust: [
-    { k: "0", v: "runtime dependencies" },
-    { k: "2", v: "hosts it talks to — both KIE's" },
-    { k: "40", v: "tests, no network" },
-    { k: "3", v: "spend checks before every request" },
-  ],
+  agents: {
+    label: "Works with",
+    items: [
+      { name: "Codex", icon: "openai", hint: "$kie-media" },
+      { name: "Claude Code", icon: "claude", hint: "/kie-media" },
+      { name: "Cursor", icon: "cursor", hint: "/ in Agent chat" },
+      { name: "Gemini CLI", icon: "gemini", hint: "auto-activated" },
+    ],
+  },
   why: {
     eyebrow: "Why another CLI",
     title: "Built for the one thing other wrappers get wrong: the key is paid.",
@@ -105,7 +108,7 @@ kie image nano-banana-2 \\
       steps: [
         { t: "Install the CLI", code: "npm i -g @uxdata-co/kie" },
         { t: "Store the key — it never reaches the agent", code: "kie key set" },
-        { t: "Install the kie-media skill", code: "kie skill install        # Claude Code + Codex\nkie skill install --agent codex   # just one" },
+        { t: "Install the kie-media skill", code: "kie skill install                 # Claude Code, Codex, Cursor, Gemini CLI\nkie skill install --agent cursor  # just one" },
       ],
       note: "Prefer the skills CLI? `npx skills add julio-daza/kie-cli` does the same for any supported agent.",
     },
@@ -131,6 +134,28 @@ kie image nano-banana-2 \\
         prompt: "$kie-media make a 5-second clip of the barista sliding a cup across the counter, soft dolly-in. Cap it at 80 credits.",
         reply: "Kling 3.0, 5 s with sound — 64 credits. Saved to assets/barista-slide.mp4. Exit 0; 120 credits left today.",
         cmds: ["kie upload ./assets/hero-coffee.png --json", "kie video kling-3.0 --prompt \"barista slides a cup across the counter, soft dolly-in\" --image <url> --duration 5 --sound --max-credits 80 --json"],
+      },
+      cursor: {
+        label: "Cursor",
+        steps: [
+          "Open a new Agent chat (Cursor 2.4+). Skills load from ~/.cursor/skills/ and ~/.agents/skills/.",
+          "Type / and pick kie-media to attach it to the message — or just ask; the description matches on its own.",
+          "Cursor runs the CLI in its terminal and replies with the file path; review the image in the editor.",
+        ],
+        prompt: "/kie-media I need three 1:1 product shots of a ceramic mug on linen, soft daylight, for the shop grid.",
+        reply: "Three images, 8 credits each — 24 total. Saved to public/shop/mug-1.png, mug-2.png, mug-3.png. Want a darker variant?",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"ceramic mug on linen, soft daylight\" --aspect 1:1 --out ./public/shop --name mug-1 --json"],
+      },
+      gemini: {
+        label: "Gemini CLI",
+        steps: [
+          "Start gemini in your project. /skills list shows kie-media (from ~/.gemini/skills/ or ~/.agents/skills/).",
+          "Ask naturally — there is no slash command. When the request matches, Gemini calls activate_skill and asks for consent the first time.",
+          "Gemini runs the CLI with --json, reports the path and credits; a blocked request (exit 3) comes back with the reason.",
+        ],
+        prompt: "Make a 9:16 teaser image of a night market street with neon signs for our Instagram story.",
+        reply: "Generated with nano-banana-2 (12 credits, 2K). Saved to assets/stories/night-market.png. 164 credits left today.",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"night market street, neon signs\" --aspect 9:16 --resolution 2K --out ./assets/stories --name night-market --json"],
       },
     },
     rules: {
@@ -178,7 +203,7 @@ kie image nano-banana-2 \\
       ["kie upload <file>", "Local file → temporary URL for --ref / --image (KIE deletes it after ~3 days)."],
       ["kie ledger [--limit 20]", "Local spend log with real creditsConsumed."],
       ["kie config set <key> <value>", "dailyBudget · maxCreditsPerTask · outDir · pollSeconds · waitTimeoutSeconds"],
-      ["kie skill install [--agent claude|codex|all]", "Install the kie-media agent skill for Claude Code / Codex (--project for the current repo)."],
+      ["kie skill install [--agent claude|codex|cursor|gemini|all]", "Install the kie-media agent skill (--project for the current repo)."],
     ],
     flagsTitle: "Generation flags",
     flags: [
@@ -203,12 +228,14 @@ kie image nano-banana-2 \\
       ["veo3", "video", "Google Veo 3 — own endpoint, --fast for veo3_fast."],
     ],
     more: "Full reference in the README",
+    teaser: "Install, key storage, every command and flag, the model catalog, spend guard and exit codes, configuration, the agent skill for four agents, security notes.",
+    cta: "Read the documentation",
   },
   skill: {
     eyebrow: "Agent skill",
     title: "Teach your agent the etiquette.",
-    lead: "The package ships an agent skill (Agent Skills spec) for Claude Code and Codex. It tells the agent when to generate, which model to pick, to check the budget first, to always pass --max-credits on video, and to return file paths — never URLs.",
-    code: "kie skill install            # ~/.claude/skills + ~/.agents/skills\nnpx skills add julio-daza/kie-cli   # alternative",
+    lead: "The package ships an agent skill (Agent Skills spec) for Claude Code, Codex, Cursor and Gemini CLI. It tells the agent when to generate, which model to pick, to check the budget first, to always pass --max-credits on video, and to return file paths — never URLs.",
+    code: "kie skill install                    # Claude Code, Codex, Cursor, Gemini CLI\nnpx skills add julio-daza/kie-cli    # alternative",
     rules: [
       "Check kie credits before the first generation.",
       "Images first, video only after the user approves the look.",
@@ -251,12 +278,15 @@ const es: typeof en = {
     copied: "Copiado",
     terminalTitle: "kie help",
   },
-  trust: [
-    { k: "0", v: "dependencias en runtime" },
-    { k: "2", v: "hosts con los que habla — ambos de KIE" },
-    { k: "40", v: "tests, sin red" },
-    { k: "3", v: "chequeos de gasto antes de cada request" },
-  ],
+  agents: {
+    label: "Funciona con",
+    items: [
+      { name: "Codex", icon: "openai", hint: "$kie-media" },
+      { name: "Claude Code", icon: "claude", hint: "/kie-media" },
+      { name: "Cursor", icon: "cursor", hint: "/ en el chat del Agente" },
+      { name: "Gemini CLI", icon: "gemini", hint: "se activa sola" },
+    ],
+  },
   why: {
     eyebrow: "Por qué otra CLI",
     title: "Construida para lo único que otros wrappers hacen mal: la llave cuesta dinero.",
@@ -336,7 +366,7 @@ kie image nano-banana-2 \\
       steps: [
         { t: "Instala la CLI", code: "npm i -g @uxdata-co/kie" },
         { t: "Guarda la key — nunca llega al agente", code: "kie key set" },
-        { t: "Instala el skill kie-media", code: "kie skill install        # Claude Code + Codex\nkie skill install --agent codex   # solo uno" },
+        { t: "Instala el skill kie-media", code: "kie skill install                 # Claude Code, Codex, Cursor, Gemini CLI\nkie skill install --agent cursor  # solo uno" },
       ],
       note: "¿Prefieres la CLI de skills? `npx skills add julio-daza/kie-cli` hace lo mismo para cualquier agente soportado.",
     },
@@ -362,6 +392,28 @@ kie image nano-banana-2 \\
         prompt: "$kie-media haz un clip de 5 segundos del barista deslizando una taza por la barra, dolly-in suave. Tope de 80 créditos.",
         reply: "Kling 3.0, 5 s con sonido — 64 créditos. Guardado en assets/barista-slide.mp4. Exit 0; quedan 120 créditos hoy.",
         cmds: ["kie upload ./assets/hero-coffee.png --json", "kie video kling-3.0 --prompt \"el barista desliza una taza por la barra, dolly-in suave\" --image <url> --duration 5 --sound --max-credits 80 --json"],
+      },
+      cursor: {
+        label: "Cursor",
+        steps: [
+          "Abre un chat nuevo del Agente (Cursor 2.4+). Los skills se cargan de ~/.cursor/skills/ y ~/.agents/skills/.",
+          "Escribe / y elige kie-media para adjuntarlo al mensaje — o solo pide; la descripción lo activa sola.",
+          "Cursor corre la CLI en su terminal y responde con la ruta del archivo; revisa la imagen en el editor.",
+        ],
+        prompt: "/kie-media necesito tres fotos de producto 1:1 de una taza de cerámica sobre lino, luz de día suave, para la grilla de la tienda.",
+        reply: "Tres imágenes, 8 créditos cada una — 24 en total. Guardadas en public/shop/mug-1.png, mug-2.png, mug-3.png. ¿Quieres una variante más oscura?",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"taza de cerámica sobre lino, luz de día suave\" --aspect 1:1 --out ./public/shop --name mug-1 --json"],
+      },
+      gemini: {
+        label: "Gemini CLI",
+        steps: [
+          "Inicia gemini en tu proyecto. /skills list muestra kie-media (desde ~/.gemini/skills/ o ~/.agents/skills/).",
+          "Pide con naturalidad — no hay comando con barra. Cuando el pedido coincide, Gemini llama a activate_skill y pide consentimiento la primera vez.",
+          "Gemini corre la CLI con --json, reporta la ruta y los créditos; un request bloqueado (exit 3) vuelve con la razón.",
+        ],
+        prompt: "Haz una imagen teaser 9:16 de una calle de mercado nocturno con letreros de neón para nuestra historia de Instagram.",
+        reply: "Generada con nano-banana-2 (12 créditos, 2K). Guardada en assets/stories/night-market.png. Quedan 164 créditos hoy.",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"calle de mercado nocturno, letreros de neón\" --aspect 9:16 --resolution 2K --out ./assets/stories --name night-market --json"],
       },
     },
     rules: {
@@ -409,7 +461,7 @@ kie image nano-banana-2 \\
       ["kie upload <archivo>", "Archivo local → URL temporal para --ref / --image (KIE lo borra a los ~3 días)."],
       ["kie ledger [--limit 20]", "Registro local de gasto con creditsConsumed reales."],
       ["kie config set <clave> <valor>", "dailyBudget · maxCreditsPerTask · outDir · pollSeconds · waitTimeoutSeconds"],
-      ["kie skill install [--agent claude|codex|all]", "Instalar el skill kie-media para Claude Code / Codex (--project para el repo actual)."],
+      ["kie skill install [--agent claude|codex|cursor|gemini|all]", "Instalar el skill kie-media (--project para el repo actual)."],
     ],
     flagsTitle: "Flags de generación",
     flags: [
@@ -434,12 +486,14 @@ kie image nano-banana-2 \\
       ["veo3", "video", "Google Veo 3 — endpoint propio, --fast para veo3_fast."],
     ],
     more: "Referencia completa en el README",
+    teaser: "Instalación, almacenamiento de la key, todos los comandos y flags, catálogo de modelos, guardia de gasto y códigos de salida, configuración, el skill para cuatro agentes, notas de seguridad.",
+    cta: "Leer la documentación",
   },
   skill: {
     eyebrow: "Skill de agente",
     title: "Enséñale la etiqueta a tu agente.",
-    lead: "El paquete incluye un skill de agente (spec Agent Skills) para Claude Code y Codex. Le dice al agente cuándo generar, qué modelo elegir, que revise el presupuesto primero, que siempre pase --max-credits en video y que devuelva rutas de archivo — nunca URLs.",
-    code: "kie skill install            # ~/.claude/skills + ~/.agents/skills\nnpx skills add julio-daza/kie-cli   # alternativa",
+    lead: "El paquete incluye un skill de agente (spec Agent Skills) para Claude Code, Codex, Cursor y Gemini CLI. Le dice al agente cuándo generar, qué modelo elegir, que revise el presupuesto primero, que siempre pase --max-credits en video y que devuelva rutas de archivo — nunca URLs.",
+    code: "kie skill install                    # Claude Code, Codex, Cursor, Gemini CLI\nnpx skills add julio-daza/kie-cli    # alternativa",
     rules: [
       "Revisar kie credits antes de la primera generación.",
       "Primero imágenes; video solo cuando el usuario aprueba el look.",

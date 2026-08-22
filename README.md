@@ -3,7 +3,7 @@
 Website for [`kie`](https://github.com/julio-daza/kie-cli), the zero-dependency KIE.ai media
 generation CLI for agents. Astro 5, static output, English at `/` and Spanish at `/es/`.
 
-**Live**: https://kie-landing.pages.dev
+**Live**: https://kiecli.com (`/docs`, `/es/`, `/es/docs`)
 
 ## Stack
 
@@ -11,7 +11,8 @@ generation CLI for agents. Astro 5, static output, English at `/` and Spanish at
 - One React island: **MaskedHeading** from [React Bits](https://reactbits.dev/text-animations/masked-heading)
   (MIT) for the hero and closing headlines. The media behind the glyphs is `public/mask.svg`,
   an animated SVG gradient — no external assets, no tracking.
-- All copy lives in `src/i18n/ui.ts`. To add a language: extend `Lang`, add an entry to `ui`,
+- Agent logos in `src/icons/` come from [@lobehub/icons-static-svg](https://github.com/lobehub/lobe-icons) (MIT) and are inlined by `Icon.astro`; the marks remain trademarks of their owners.
+- All copy lives in `src/i18n/ui.ts` (landing) and `src/i18n/docs.ts` (docs page). To add a language: extend `Lang`, add an entry to `ui`,
   create `src/pages/<lang>/index.astro`.
 - Terminal transcripts are HTML strings in `src/components/terminals.ts` (Astro collapses
   whitespace inside slotted `<pre>`).

@@ -4,7 +4,7 @@ import react from "@astrojs/react";
 
 export default defineConfig({
   // Set this to the final URL before deploying (used for canonical + hreflang tags).
-  site: "https://kie-landing.pages.dev",
+  site: "https://kiecli.com",
   integrations: [react()],
   i18n: {
     defaultLocale: "en",
