@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { LANGS, REPO, localePath, t, type Lang } from "../i18n/ui";
+import { LANGS, NPM, REPO, localePath, t, type Lang } from "../i18n/ui";
 
 interface Props {
   lang: Lang;
@@ -55,8 +55,8 @@ const pageDescription = description ?? s.meta.description;
           <a href={`${home}#why`}>{s.nav.features}</a>
           <a href={`${home}#install`}>{s.nav.install}</a>
           <a href={`${home}#tutorials`}>{s.nav.tutorials}</a>
+          <a href={`${home}#guard`}>{s.nav.guard}</a>
           <a href={docsHref} class:list={[{ active: path === "/docs" }]}>{s.nav.docs}</a>
-          <a href={`${home}#skill`}>{s.nav.skill}</a>
         </nav>
         <div class="actions">
           <a href={localePath(other, path)} class="lang" hreflang={other} title={LANGS[other]}>{s.nav.lang}</a>
@@ -68,6 +68,12 @@ const pageDescription = description ?? s.meta.description;
             >
             <span>{s.nav.github}</span>
           </a>
+          <a href={NPM} class="btn gh npm" target="_blank" rel="noopener" title="@uxdata-co/kie on npm">
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"
+              ><path fill="#cb3837" d="M0 0h16v16H0z" /><path fill="#fff" d="M3 3h10v10H9.5V5.5h-3V13H3z" /></svg
+            >
+            <span>{s.nav.npm}</span>
+          </a>
         </div>
       </div>
     </header>
@@ -78,7 +84,7 @@ const pageDescription = description ?? s.meta.description;
 
     <footer>
       <div class="rails foot">
-        <span class="muted">{s.footer.built}</span>
+        <span class="muted">{s.footer.builtPre} <a href="https://www.juliodaza.com/" target="_blank" rel="noopener" class="author">{s.footer.name}</a></span>
         <span class="mono muted">{s.footer.license} · <a href={REPO} target="_blank" rel="noopener">github.com/julio-daza/kie-cli</a></span>
       </div>
     </footer>
@@ -183,6 +189,9 @@ const pageDescription = description ?? s.meta.description;
     padding: 0 14px;
     font-size: 14px;
   }
+  .npm svg {
+    border-radius: 3px;
+  }
   @media (max-width: 760px) {
     .links {
       display: none;
@@ -204,5 +213,13 @@ const pageDescription = description ?? s.meta.description;
   }
   .foot a:hover {
     color: var(--fg);
+  }
+  .author {
+    color: var(--fg-muted);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .author:hover {
+    color: var(--brand);
+    border-bottom-color: var(--brand);
   }
 </style>

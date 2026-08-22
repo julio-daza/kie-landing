@@ -53,4 +53,4 @@ and Open Graph URLs derive from it).
 
 ## License
 
-MIT. Not affiliated with KIE.ai; "KIE" and its logo belong to their owner.
+MIT. "KIE" and its logo belong to their owner.

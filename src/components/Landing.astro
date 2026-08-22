@@ -11,16 +11,11 @@ interface Props {
 const { lang } = Astro.props;
 const s = t(lang);
 const docsHref = localePath(lang, "/docs");
+const home = localePath(lang);
 const TUT_AGENTS = ["claude", "codex", "cursor", "gemini"] as const;
 const ICON: Record<string, string> = { claude: "claude", codex: "openai", cursor: "cursor", gemini: "gemini" };
 const installCmd = "npm i -g @uxdata-co/kie";
-
-const usageTabs = [
-  { id: "image", label: s.usage.tabs.image, code: s.usage.image },
-  { id: "video", label: s.usage.tabs.video, code: s.usage.video },
-  { id: "edit", label: s.usage.tabs.edit, code: s.usage.edit },
-  { id: "raw", label: s.usage.tabs.raw, code: s.usage.raw },
-];
+const code = (x: string) => x.replace(/`([^`]+)`/g, "<code>$1</code>");
 ---
 
 <!-- ============================================================ HERO -->
@@ -48,14 +43,15 @@ const usageTabs = [
           className="hero-title"
         />
         <p class="lead">{s.hero.sub}</p>
-        <div class="cta-row">
-          <a href="#install" class="btn btn-primary">{s.hero.ctaPrimary} →</a>
-          <a href="#docs" class="btn">{s.hero.ctaSecondary}</a>
-        </div>
         <div class="cmd">
           <code>$ {installCmd}</code>
           <button class="copy" data-copy={installCmd} data-copied={s.hero.copied} type="button">{s.hero.copy}</button>
         </div>
+        <a href={`${home}#tutorials`} class="chat-link">
+          <span class="chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          {s.hero.ctaSecondary}
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
       </div>
       <div class="hero-term reveal in">
         <Terminal title={s.hero.terminalTitle} html={heroTerminal} />
@@ -116,47 +112,12 @@ const usageTabs = [
             <span class="idx">0{i + 1}</span>
             <div>
               <h3>{st.t}</h3>
-              <p class="muted" set:html={st.d.replace(/`([^`]+)`/g, "<code>$1</code>")} />
+              <p class="muted" set:html={code(st.d)} />
               <pre class="code"><code>{st.code}</code></pre>
             </div>
           </li>
         ))}
       </ol>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================ USAGE -->
-<section id="usage" class="section-pad">
-  <div class="rails">
-    <span class="cross tl"></span><span class="cross tr"></span>
-    <div class="reveal">
-      <p class="eyebrow">{s.usage.eyebrow}</p>
-      <h2>{s.usage.title}</h2>
-    </div>
-    <div class="usage reveal" data-tabs>
-      <div class="tablist" role="tablist">
-        {usageTabs.map((tab, i) => (
-          <button role="tab" id={`tab-${tab.id}`} aria-controls={`panel-${tab.id}`} aria-selected={i === 0 ? "true" : "false"} type="button">
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      {usageTabs.map((tab, i) => (
-        <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={i !== 0}>
-          <pre class="code big"><code>{tab.code}</code></pre>
-        </div>
-      ))}
-      <div class="result">
-        <span class="eyebrow" style="margin:0 0 12px">{s.usage.resultTitle}</span>
-        <pre class="code json"><code>{`{
-  "taskId": "task_c0ffee12",
-  "model": "nano-banana-2",
-  "state": "success",
-  "creditsConsumed": 8,
-  "files": ["kie-media/nano-banana-2-c0ffee12.png"]
-}`}</code></pre>
-      </div>
     </div>
   </div>
 </section>
@@ -169,20 +130,6 @@ const usageTabs = [
       <p class="eyebrow">{s.tutorials.eyebrow}</p>
       <h2>{s.tutorials.title}</h2>
       <p class="lead">{s.tutorials.lead}</p>
-    </div>
-
-    <div class="common reveal">
-      <span class="eyebrow" style="margin:0 0 14px">{s.tutorials.common.title}</span>
-      <div class="grid common-grid">
-        {s.tutorials.common.steps.map((st, i) => (
-          <div class="card">
-            <span class="idx">0{i + 1}</span>
-            <h3>{st.t}</h3>
-            <pre class="code" style="margin-top:12px"><code>{st.code}</code></pre>
-          </div>
-        ))}
-      </div>
-      <p class="muted small" set:html={s.tutorials.common.note.replace(/`([^`]+)`/g, "<code>$1</code>")} />
     </div>
 
     <div class="agent-tabs reveal" data-tabs>
@@ -200,7 +147,7 @@ const usageTabs = [
           <div role="tabpanel" id={`tut-panel-${k}`} aria-labelledby={`tut-tab-${k}`} hidden={i !== 0} class="agent-panel">
             <ol class="tut-steps">
               {tab.steps.map((st, j) => (
-                <li><span class="n">{j + 1}</span><p set:html={st.replace(/(\/kie-media|\$kie-media|~\/\.[a-z]+\/skills\/|\/skills list|\/skills|--json|exit 3|activate_skill|gemini)/g, "<code>$1</code>")} /></li>
+                <li><span class="n">{j + 1}</span><p set:html={code(st)} /></li>
               ))}
             </ol>
             <div class="chat">
@@ -221,7 +168,7 @@ const usageTabs = [
     <div class="tut-rules reveal">
       <h3 class="sub">{s.tutorials.rules.title}</h3>
       <ul class="rules two">
-        {s.tutorials.rules.items.map((r) => <li><span class="chk">✓</span>{r}</li>)}
+        {s.tutorials.rules.items.map((r) => <li><span class="chk">✕</span><span set:html={code(r)} /></li>)}
       </ul>
       <p class="muted small"><code>{s.tutorials.rules.budget}</code></p>
     </div>
@@ -237,19 +184,6 @@ const usageTabs = [
         <p class="eyebrow">{s.guard.eyebrow}</p>
         <h2>{s.guard.title}</h2>
         <p class="lead">{s.guard.lead}</p>
-        <div class="exit">
-          <span class="eyebrow" style="margin:36px 0 12px">{s.guard.exit}</span>
-          <table class="tbl">
-            <tbody>
-              {s.guard.codes.map(([code, desc]) => (
-                <tr>
-                  <td><span class:list={["code-pill", code === "3" ? "hot" : ""]}>{code}</span></td>
-                  <td>{desc}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
       <div class="checks">
         {s.guard.checks.map((c, i) => (
@@ -257,11 +191,11 @@ const usageTabs = [
             <span class="n">{c.n}</span>
             <div>
               <h3>{c.t}</h3>
-              <p class="muted">{c.d}</p>
+              <p class="muted" set:html={code(c.d)} />
             </div>
           </div>
         ))}
-        <Terminal title="exit 3" class="reveal" html={guardTerminal} />
+        <Terminal title="exit 3" class="reveal guard-term" html={guardTerminal} />
       </div>
     </div>
   </div>
@@ -271,43 +205,13 @@ const usageTabs = [
 <section id="docs" class="section-pad">
   <div class="rails">
     <span class="cross tl"></span><span class="cross tr"></span>
-    <div class="split">
-      <div class="reveal">
-        <p class="eyebrow">{s.docs.eyebrow}</p>
-        <h2>{s.docs.title}</h2>
-        <p class="lead">{s.docs.teaser}</p>
-        <p style="margin-top:28px"><a class="btn btn-primary" href={docsHref}>{s.docs.cta} →</a></p>
+    <div class="docs-band reveal">
+      <div>
+        <p class="eyebrow">{s.docsCta.eyebrow}</p>
+        <h2>{s.docsCta.title}</h2>
+        <p class="lead">{s.docsCta.teaser}</p>
       </div>
-      <div class="tbl-wrap reveal">
-        <table class="tbl">
-          <tbody>
-            {s.docs.commands.slice(0, 7).map(([cmd, desc]) => (
-              <tr><td>{cmd}</td><td>{desc}</td></tr>
-            ))}
-            <tr><td colspan="2"><a class="more" href={docsHref}>{s.docs.more.replace("README", "docs")} →</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================ SKILL -->
-<section id="skill" class="section-pad">
-  <div class="rails">
-    <span class="cross tl"></span><span class="cross tr"></span>
-    <div class="split">
-      <div class="reveal">
-        <p class="eyebrow">{s.skill.eyebrow}</p>
-        <h2>{s.skill.title}</h2>
-        <p class="lead">{s.skill.lead}</p>
-        <pre class="code" style="margin-top:28px"><code>{s.skill.code}</code></pre>
-      </div>
-      <ul class="rules">
-        {s.skill.rules.map((r, i) => (
-          <li class="reveal" style={`transition-delay:${i * 70}ms`}><span class="chk">✓</span>{r}</li>
-        ))}
-      </ul>
+      <a class="btn btn-primary" href={docsHref}>{s.docsCta.cta} →</a>
     </div>
   </div>
 </section>
@@ -342,7 +246,7 @@ const usageTabs = [
       weight={700}
       tracking={-0.04}
       lineHeight={1.02}
-      textScale={0.072}
+      textScale={0.09}
       reveal="rise"
       trigger="view"
       parallax={18}
@@ -387,14 +291,8 @@ const usageTabs = [
   .hero-term {
     min-width: 0;
   }
-  .cta-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 32px;
-  }
   .cmd {
-    margin-top: 22px;
+    margin-top: 36px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -427,6 +325,62 @@ const usageTabs = [
   .copy:hover {
     border-color: var(--brand);
     color: var(--brand);
+  }
+  .chat-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    transition: color 0.18s ease;
+  }
+  .chat-link:hover {
+    color: var(--brand);
+  }
+  .chat-link .arrow {
+    transition: transform 0.18s ease;
+  }
+  .chat-link:hover .arrow {
+    transform: translateX(3px);
+  }
+  .chat-dots {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .chat-dots i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--brand);
+    animation: chat-blink 1.4s infinite ease-in-out;
+  }
+  .chat-dots i:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .chat-dots i:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  @keyframes chat-blink {
+    0%,
+    80%,
+    100% {
+      opacity: 0.25;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chat-dots i {
+      animation: none;
+      opacity: 1;
+    }
   }
   .hero-term {
     transform: perspective(1400px) rotateY(-4deg);
@@ -480,16 +434,6 @@ const usageTabs = [
     width: 18px;
     height: 18px;
   }
-  .num {
-    font-size: 40px;
-    font-weight: 650;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    background: linear-gradient(180deg, #fff, #9ec9ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
   .lbl {
     font-size: 14px;
     color: var(--fg-muted);
@@ -497,9 +441,9 @@ const usageTabs = [
 
   /* why */
   .why-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1040px) {
     .why-grid {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -522,14 +466,14 @@ const usageTabs = [
     display: grid;
     grid-template-columns: 48px 1fr;
     gap: 12px;
-    padding: 28px 0;
+    padding: 24px 0;
     border-top: 1px solid var(--line);
   }
   .step:last-child {
     border-bottom: 1px solid var(--line);
   }
   .step p {
-    margin: 6px 0 16px;
+    margin: 6px 0 14px;
     font-size: 15px;
   }
   .step code:not(pre code) {
@@ -539,12 +483,7 @@ const usageTabs = [
     border: 1px solid var(--line);
   }
 
-  /* usage */
-  .usage {
-    margin-top: 40px;
-    border: 1px solid var(--line);
-    background: var(--bg-card);
-  }
+  /* tabs (shared) */
   .tablist {
     display: flex;
     border-bottom: 1px solid var(--line);
@@ -565,46 +504,12 @@ const usageTabs = [
     color: var(--fg);
     box-shadow: inset 0 -2px 0 var(--brand);
   }
-  .usage pre.code.big {
-    border: 0;
-    border-radius: 0;
-    font-size: 15px;
-    padding: 28px 24px;
-    background: transparent;
-  }
-  .result {
-    border-top: 1px solid var(--line);
-    padding: 22px 24px 24px;
-  }
-  .json {
-    background: transparent;
-    border: 0;
-    padding: 0;
-  }
 
   /* tutorials */
   .tutorials {
     background:
       radial-gradient(700px 360px at 90% 0%, rgba(0, 168, 255, 0.08), transparent 60%),
       var(--bg);
-  }
-  .common {
-    margin-top: 48px;
-  }
-  .common-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @media (max-width: 900px) {
-    .common-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  .common-grid .card h3 {
-    font-size: 16px;
-  }
-  .common-grid pre.code {
-    font-size: 12.5px;
-    padding: 12px 14px;
   }
   .small {
     font-size: 14px;
@@ -649,6 +554,7 @@ const usageTabs = [
     display: flex;
     flex-direction: column;
     gap: 18px;
+    align-content: start;
   }
   @media (max-width: 900px) {
     .tut-steps {
@@ -731,12 +637,15 @@ const usageTabs = [
     border-radius: 6px;
     background: #0a0a0d;
     border: 1px solid var(--line);
-    overflow-x: auto;
   }
   .ran code {
     font-size: 12px;
     color: var(--fg-muted);
-    white-space: pre;
+    /* Wrap long invocations: a sideways scrollbar hides the end of the command. */
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding-left: 12px;
+    text-indent: -12px;
   }
   .tut-rules {
     margin-top: 40px;
@@ -758,8 +667,18 @@ const usageTabs = [
   .rules.two li:nth-last-child(-n + 2) {
     border-bottom: 1px solid var(--line);
   }
+  .rules code {
+    background: var(--bg-raised);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    font-size: 13px;
+  }
 
   /* guard */
+  .guard-term {
+    margin-top: 28px;
+  }
   .checks {
     display: flex;
     flex-direction: column;
@@ -774,7 +693,6 @@ const usageTabs = [
   }
   .check:nth-last-child(2) {
     border-bottom: 1px solid var(--line);
-    margin-bottom: 28px;
   }
   .check .n {
     font-family: var(--font-mono);
@@ -786,33 +704,25 @@ const usageTabs = [
     margin: 6px 0 0;
     font-size: 15px;
   }
-  .code-pill {
-    font-family: var(--font-mono);
-    display: inline-block;
-    min-width: 28px;
-    text-align: center;
-    padding: 2px 8px;
-    border-radius: 4px;
+  .check code {
     background: var(--bg-raised);
-    border: 1px solid var(--line-strong);
-  }
-  .code-pill.hot {
-    color: var(--brand);
-    border-color: rgba(0, 168, 255, 0.5);
-    background: var(--brand-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    font-size: 13px;
   }
 
-  /* docs */
-  .docs-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    margin-top: 48px;
+  /* docs band */
+  .docs-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
   }
-  @media (max-width: 900px) {
-    .docs-2col {
-      grid-template-columns: 1fr;
-    }
+  .docs-band .lead {
+    max-width: 60ch;
+    margin-bottom: 0;
   }
   .sub {
     margin-bottom: 14px;
@@ -823,12 +733,8 @@ const usageTabs = [
     letter-spacing: 0.1em;
     font-weight: 500;
   }
-  .more {
-    color: var(--brand);
-    font-weight: 500;
-  }
 
-  /* skill */
+  /* rules */
   .rules {
     list-style: none;
     margin: 0;
@@ -845,7 +751,7 @@ const usageTabs = [
     border-bottom: 1px solid var(--line);
   }
   .chk {
-    color: var(--ok);
+    color: var(--fg-dim);
     font-family: var(--font-mono);
   }
 
@@ -888,6 +794,9 @@ const usageTabs = [
 
   /* cta */
   .cta {
+    /* The masked heading paints a parallax layer wider than its box; clip it
+       so the page never gains a horizontal scrollbar on narrow viewports. */
+    overflow: clip;
     background:
       radial-gradient(800px 400px at 50% 120%, rgba(0, 168, 255, 0.18), transparent 65%),
       var(--bg);

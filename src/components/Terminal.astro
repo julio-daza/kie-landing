@@ -60,7 +60,9 @@ const { title = "terminal", class: cls = "", html } = Astro.props;
     margin: 0;
     padding: 18px 20px;
     font-family: var(--font-mono);
-    font-size: 13px;
+    /* Transcripts are capped at 50 columns (see terminals.ts); this keeps them
+       inside narrow grid columns without a horizontal scrollbar. */
+    font-size: clamp(10.5px, 0.9vw, 13px);
     line-height: 1.55;
     color: #d9d9e0;
     overflow-x: auto;
