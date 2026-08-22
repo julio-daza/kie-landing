@@ -155,6 +155,73 @@ const usageTabs = [
   </div>
 </section>
 
+<!-- ============================================================ TUTORIALS -->
+<section id="tutorials" class="section-pad tutorials">
+  <div class="rails">
+    <span class="cross tl"></span><span class="cross tr"></span>
+    <div class="reveal">
+      <p class="eyebrow">{s.tutorials.eyebrow}</p>
+      <h2>{s.tutorials.title}</h2>
+      <p class="lead">{s.tutorials.lead}</p>
+    </div>
+
+    <div class="common reveal">
+      <span class="eyebrow" style="margin:0 0 14px">{s.tutorials.common.title}</span>
+      <div class="grid common-grid">
+        {s.tutorials.common.steps.map((st, i) => (
+          <div class="card">
+            <span class="idx">0{i + 1}</span>
+            <h3>{st.t}</h3>
+            <pre class="code" style="margin-top:12px"><code>{st.code}</code></pre>
+          </div>
+        ))}
+      </div>
+      <p class="muted small" set:html={s.tutorials.common.note.replace(/`([^`]+)`/g, "<code>$1</code>")} />
+    </div>
+
+    <div class="agent-tabs reveal" data-tabs>
+      <div class="tablist" role="tablist">
+        {(["claude", "codex"] as const).map((k, i) => (
+          <button role="tab" id={`tut-tab-${k}`} aria-controls={`tut-panel-${k}`} aria-selected={i === 0 ? "true" : "false"} type="button">
+            <span class={`mark ${k}`} aria-hidden="true">{k === "claude" ? "✱" : "⌘"}</span>
+            {s.tutorials.tabs[k].label}
+          </button>
+        ))}
+      </div>
+      {(["claude", "codex"] as const).map((k, i) => {
+        const tab = s.tutorials.tabs[k];
+        return (
+          <div role="tabpanel" id={`tut-panel-${k}`} aria-labelledby={`tut-tab-${k}`} hidden={i !== 0} class="agent-panel">
+            <ol class="tut-steps">
+              {tab.steps.map((st, j) => (
+                <li><span class="n">{j + 1}</span><p set:html={st.replace(/(\/kie-media|\$kie-media|~\/\.[a-z]+\/skills\/|\/skills|--json|exit 3)/g, "<code>$1</code>")} /></li>
+              ))}
+            </ol>
+            <div class="chat">
+              <div class="bubble user"><span class="who">you</span>{tab.prompt}</div>
+              <div class="bubble agent">
+                <span class="who">{tab.label}</span>
+                <div class="ran">
+                  {tab.cmds.map((c) => <code>$ {c}</code>)}
+                </div>
+                {tab.reply}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <div class="tut-rules reveal">
+      <h3 class="sub">{s.tutorials.rules.title}</h3>
+      <ul class="rules two">
+        {s.tutorials.rules.items.map((r) => <li><span class="chk">✓</span>{r}</li>)}
+      </ul>
+      <p class="muted small"><code>{s.tutorials.rules.budget}</code></p>
+    </div>
+  </div>
+</section>
+
 <!-- ============================================================ SPEND GUARD -->
 <section id="guard" class="section-pad guard">
   <div class="rails">
@@ -510,6 +577,199 @@ const usageTabs = [
     background: transparent;
     border: 0;
     padding: 0;
+  }
+
+  /* tutorials */
+  .tutorials {
+    background:
+      radial-gradient(700px 360px at 90% 0%, rgba(0, 168, 255, 0.08), transparent 60%),
+      var(--bg);
+  }
+  .common {
+    margin-top: 48px;
+  }
+  .common-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 900px) {
+    .common-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .common-grid .card h3 {
+    font-size: 16px;
+  }
+  .common-grid pre.code {
+    font-size: 12.5px;
+    padding: 12px 14px;
+  }
+  .small {
+    font-size: 14px;
+    margin: 14px 0 0;
+  }
+  .small code {
+    background: var(--bg-raised);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+  .agent-tabs {
+    margin-top: 40px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+  }
+  .agent-tabs .tablist button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    padding: 16px 24px;
+  }
+  .mark {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #fff;
+  }
+  .mark.claude {
+    background: #d97757;
+  }
+  .mark.codex {
+    background: #111;
+    border: 1px solid var(--line-strong);
+  }
+  .agent-panel[hidden] {
+    display: none;
+  }
+  .agent-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 0;
+  }
+  @media (max-width: 900px) {
+    .agent-panel {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .tut-steps {
+    list-style: none;
+    margin: 0;
+    padding: 28px 28px 28px 24px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  @media (max-width: 900px) {
+    .tut-steps {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+  .tut-steps li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--fg-muted);
+  }
+  .tut-steps p {
+    margin: 0;
+  }
+  .tut-steps code {
+    color: var(--fg);
+    background: var(--bg-raised);
+    padding: 0 5px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+  }
+  .tut-steps .n {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--brand);
+  }
+  .chat {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background:
+      radial-gradient(500px 240px at 100% 0%, rgba(30, 64, 216, 0.12), transparent 60%);
+  }
+  .bubble {
+    max-width: 92%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .bubble .who {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 6px;
+  }
+  .bubble.user {
+    align-self: flex-end;
+    background: var(--brand-soft);
+    border-color: rgba(0, 168, 255, 0.35);
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.agent {
+    align-self: flex-start;
+    background: var(--bg-raised);
+    border-bottom-left-radius: 4px;
+  }
+  .ran {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #0a0a0d;
+    border: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  .ran code {
+    font-size: 12px;
+    color: var(--fg-muted);
+    white-space: pre;
+  }
+  .tut-rules {
+    margin-top: 40px;
+  }
+  .rules.two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 32px;
+  }
+  @media (max-width: 800px) {
+    .rules.two {
+      grid-template-columns: 1fr;
+    }
+  }
+  .rules.two li {
+    font-size: 15px;
+    padding: 14px 0;
+  }
+  .rules.two li:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
   }
 
   /* guard */

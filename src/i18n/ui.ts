@@ -9,7 +9,7 @@ const en = {
     description:
       "Generate images and video on KIE.ai from the terminal or from an AI agent. Zero dependencies, key in the OS keychain, no callbacks, hard spend guards.",
   },
-  nav: { features: "Why", install: "Install", docs: "Docs", skill: "Agent skill", github: "GitHub", lang: "ES" },
+  nav: { features: "Why", install: "Install", tutorials: "Tutorials", docs: "Docs", skill: "Agent skill", github: "GitHub", lang: "ES" },
   hero: {
     eyebrow: "Open source · MIT · 0 runtime dependencies",
     headline: "Generate media. Keep your keys.",
@@ -96,6 +96,54 @@ kie image nano-banana-2 \\
   --input '{"prompt":"…"}' --max-credits 30`,
     resultTitle: "What comes back",
   },
+  tutorials: {
+    eyebrow: "Tutorials",
+    title: "Generate images from chat.",
+    lead: "This is the whole point: your coding agent makes the media, you keep the key. One install, one skill, then you just ask.",
+    common: {
+      title: "Once, for any agent",
+      steps: [
+        { t: "Install the CLI", code: "npm i -g @uxdata-co/kie" },
+        { t: "Store the key — it never reaches the agent", code: "kie key set" },
+        { t: "Install the kie-media skill", code: "kie skill install        # Claude Code + Codex\nkie skill install --agent codex   # just one" },
+      ],
+      note: "Prefer the skills CLI? `npx skills add julio-daza/kie-cli` does the same for any supported agent.",
+    },
+    tabs: {
+      claude: {
+        label: "Claude Code",
+        steps: [
+          "Start a new session — skills are discovered at startup. CLI, desktop app and IDE extension all read ~/.claude/skills/.",
+          "Ask in plain language. The description triggers the skill; /kie-media invokes it explicitly.",
+          "Claude checks the budget, generates, downloads, and answers with the file path and credits spent.",
+        ],
+        prompt: "Generate a 16:9 hero image of an isometric coffee shop with warm light, for the landing page.",
+        reply: "Done — 8 credits. Saved to assets/hero-coffee.png (1920×1080). Want a night version with the same composition?",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"isometric coffee shop, warm light\" --aspect 16:9 --out ./assets --name hero-coffee --json"],
+      },
+      codex: {
+        label: "Codex",
+        steps: [
+          "Start a new session — CLI, IDE extension and desktop app all read ~/.agents/skills/. /skills lists what is installed.",
+          "Ask naturally, or call it with $kie-media. For video, say the cap out loud.",
+          "Codex runs the CLI with --json and reports the file path; a blocked request (exit 3) comes back with the reason.",
+        ],
+        prompt: "$kie-media make a 5-second clip of the barista sliding a cup across the counter, soft dolly-in. Cap it at 80 credits.",
+        reply: "Kling 3.0, 5 s with sound — 64 credits. Saved to assets/barista-slide.mp4. Exit 0; 120 credits left today.",
+        cmds: ["kie upload ./assets/hero-coffee.png --json", "kie video kling-3.0 --prompt \"barista slides a cup across the counter, soft dolly-in\" --image <url> --duration 5 --sound --max-credits 80 --json"],
+      },
+    },
+    rules: {
+      title: "What the agent will and won't do",
+      items: [
+        "Images first; video only after you approve the look, always with --max-credits.",
+        "A spend-guard block (exit 3) is reported with its reason — it never raises the cap by itself.",
+        "It never asks for, prints or sets the API key. Missing key → it tells you to run kie key set.",
+        "You get a file path, never a KIE URL (they expire in 24 h).",
+      ],
+      budget: "Daily ceiling for everything the agent does: kie config set dailyBudget 300",
+    },
+  },
   guard: {
     eyebrow: "Spend guard",
     title: "Blocked means nothing was sent.",
@@ -130,6 +178,7 @@ kie image nano-banana-2 \\
       ["kie upload <file>", "Local file → temporary URL for --ref / --image (KIE deletes it after ~3 days)."],
       ["kie ledger [--limit 20]", "Local spend log with real creditsConsumed."],
       ["kie config set <key> <value>", "dailyBudget · maxCreditsPerTask · outDir · pollSeconds · waitTimeoutSeconds"],
+      ["kie skill install [--agent claude|codex|all]", "Install the kie-media agent skill for Claude Code / Codex (--project for the current repo)."],
     ],
     flagsTitle: "Generation flags",
     flags: [
@@ -158,8 +207,8 @@ kie image nano-banana-2 \\
   skill: {
     eyebrow: "Agent skill",
     title: "Teach your agent the etiquette.",
-    lead: "The repo ships a Claude Code skill (Agent Skills spec). It tells the agent when to generate, which model to pick, to check the budget first, to always pass --max-credits on video, and to return file paths — never URLs.",
-    code: `ln -s "$PWD/skill/kie-media" ~/.claude/skills/kie-media`,
+    lead: "The package ships an agent skill (Agent Skills spec) for Claude Code and Codex. It tells the agent when to generate, which model to pick, to check the budget first, to always pass --max-credits on video, and to return file paths — never URLs.",
+    code: "kie skill install            # ~/.claude/skills + ~/.agents/skills\nnpx skills add julio-daza/kie-cli   # alternative",
     rules: [
       "Check kie credits before the first generation.",
       "Images first, video only after the user approves the look.",
@@ -191,7 +240,7 @@ const es: typeof en = {
     description:
       "Genera imágenes y video en KIE.ai desde la terminal o desde un agente de IA. Cero dependencias, key en el llavero del sistema, sin callbacks, límites de gasto estrictos.",
   },
-  nav: { features: "Por qué", install: "Instalar", docs: "Docs", skill: "Skill de agente", github: "GitHub", lang: "EN" },
+  nav: { features: "Por qué", install: "Instalar", tutorials: "Tutoriales", docs: "Docs", skill: "Skill de agente", github: "GitHub", lang: "EN" },
   hero: {
     eyebrow: "Open source · MIT · 0 dependencias en runtime",
     headline: "Genera medios. Conserva tus llaves.",
@@ -278,6 +327,54 @@ kie image nano-banana-2 \\
   --input '{"prompt":"…"}' --max-credits 30`,
     resultTitle: "Lo que vuelve",
   },
+  tutorials: {
+    eyebrow: "Tutoriales",
+    title: "Genera imágenes desde el chat.",
+    lead: "De esto se trata: tu agente de código produce los medios, tú conservas la llave. Una instalación, un skill, y después solo pides.",
+    common: {
+      title: "Una vez, para cualquier agente",
+      steps: [
+        { t: "Instala la CLI", code: "npm i -g @uxdata-co/kie" },
+        { t: "Guarda la key — nunca llega al agente", code: "kie key set" },
+        { t: "Instala el skill kie-media", code: "kie skill install        # Claude Code + Codex\nkie skill install --agent codex   # solo uno" },
+      ],
+      note: "¿Prefieres la CLI de skills? `npx skills add julio-daza/kie-cli` hace lo mismo para cualquier agente soportado.",
+    },
+    tabs: {
+      claude: {
+        label: "Claude Code",
+        steps: [
+          "Abre una sesión nueva — los skills se detectan al arrancar. CLI, app de escritorio y extensión de IDE leen ~/.claude/skills/.",
+          "Pide en lenguaje natural. La descripción activa el skill; /kie-media lo invoca explícitamente.",
+          "Claude revisa el presupuesto, genera, descarga y responde con la ruta del archivo y los créditos gastados.",
+        ],
+        prompt: "Genera una imagen hero 16:9 de una cafetería isométrica con luz cálida, para la landing.",
+        reply: "Listo — 8 créditos. Guardada en assets/hero-coffee.png (1920×1080). ¿Quieres una versión nocturna con la misma composición?",
+        cmds: ["kie credits --json", "kie image nano-banana-2 --prompt \"cafetería isométrica, luz cálida\" --aspect 16:9 --out ./assets --name hero-coffee --json"],
+      },
+      codex: {
+        label: "Codex",
+        steps: [
+          "Abre una sesión nueva — CLI, extensión de IDE y app de escritorio leen ~/.agents/skills/. /skills lista lo instalado.",
+          "Pide con naturalidad o invócalo con $kie-media. Para video, di el tope en voz alta.",
+          "Codex corre la CLI con --json y reporta la ruta del archivo; un request bloqueado (exit 3) vuelve con la razón.",
+        ],
+        prompt: "$kie-media haz un clip de 5 segundos del barista deslizando una taza por la barra, dolly-in suave. Tope de 80 créditos.",
+        reply: "Kling 3.0, 5 s con sonido — 64 créditos. Guardado en assets/barista-slide.mp4. Exit 0; quedan 120 créditos hoy.",
+        cmds: ["kie upload ./assets/hero-coffee.png --json", "kie video kling-3.0 --prompt \"el barista desliza una taza por la barra, dolly-in suave\" --image <url> --duration 5 --sound --max-credits 80 --json"],
+      },
+    },
+    rules: {
+      title: "Qué hará y qué no hará el agente",
+      items: [
+        "Primero imágenes; video solo cuando apruebas el look, siempre con --max-credits.",
+        "Un bloqueo de la guardia (exit 3) se reporta con su razón — nunca sube el tope por su cuenta.",
+        "Nunca pide, muestra ni configura la API key. Si falta → te dice que corras kie key set.",
+        "Recibes una ruta de archivo, nunca una URL de KIE (expiran en 24 h).",
+      ],
+      budget: "Techo diario para todo lo que haga el agente: kie config set dailyBudget 300",
+    },
+  },
   guard: {
     eyebrow: "Guardia de gasto",
     title: "Bloqueado significa que no se envió nada.",
@@ -312,6 +409,7 @@ kie image nano-banana-2 \\
       ["kie upload <archivo>", "Archivo local → URL temporal para --ref / --image (KIE lo borra a los ~3 días)."],
       ["kie ledger [--limit 20]", "Registro local de gasto con creditsConsumed reales."],
       ["kie config set <clave> <valor>", "dailyBudget · maxCreditsPerTask · outDir · pollSeconds · waitTimeoutSeconds"],
+      ["kie skill install [--agent claude|codex|all]", "Instalar el skill kie-media para Claude Code / Codex (--project para el repo actual)."],
     ],
     flagsTitle: "Flags de generación",
     flags: [
@@ -340,8 +438,8 @@ kie image nano-banana-2 \\
   skill: {
     eyebrow: "Skill de agente",
     title: "Enséñale la etiqueta a tu agente.",
-    lead: "El repo incluye un skill para Claude Code (spec Agent Skills). Le dice al agente cuándo generar, qué modelo elegir, que revise el presupuesto primero, que siempre pase --max-credits en video y que devuelva rutas de archivo — nunca URLs.",
-    code: `ln -s "$PWD/skill/kie-media" ~/.claude/skills/kie-media`,
+    lead: "El paquete incluye un skill de agente (spec Agent Skills) para Claude Code y Codex. Le dice al agente cuándo generar, qué modelo elegir, que revise el presupuesto primero, que siempre pase --max-credits en video y que devuelva rutas de archivo — nunca URLs.",
+    code: "kie skill install            # ~/.claude/skills + ~/.agents/skills\nnpx skills add julio-daza/kie-cli   # alternativa",
     rules: [
       "Revisar kie credits antes de la primera generación.",
       "Primero imágenes; video solo cuando el usuario aprueba el look.",
